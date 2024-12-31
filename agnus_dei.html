@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">  <!-- #Link to external CSS file -->
+    <title>Agnus Dei</title>
+    <style>
+        #chat-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        #chat-messages {
+            height: 400px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        #user-input {
+            width: 80%;
+            padding: 5px;
+        }
+        button {
+            padding: 5px 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="nav-placeholder"></div>
+    <hr>
+
+    <h1>Agnus Dei</h1>
+    <p>This will be ready in Jan 2025?</p>
+
+    <div id="chat-container"></div>
+        <div id="chat-messages"></div>
+        <input type="text" id="user-input" placeholder="Ask Agnus Dei...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value;
+            if (!message) return;
+
+            // Display user message
+            addMessage('You: ' + message);
+            input.value = '';
+
+            // Send to backend
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                addMessage('Agnus Dei: ' + data.response);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                addMessage('Error: Failed to get response');
+            });
+        }
+
+        function addMessage(message) {
+            const messagesDiv = document.getElementById('chat-messages');
+            messagesDiv.innerHTML += '<div>' + message + '</div>';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Allow Enter key to send message
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+    
+    <script src="scripts.js"></script>
+    <script src="nav.js"></script>
+</body>
+
+</html>
+
+
